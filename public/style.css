@@ -1,0 +1,371 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #080b18;
+  --card: #152049;
+  --primary: #6366f1;
+  --secondary: #a855f7;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --border: rgba(148, 163, 184, 0.16);
+}
+
+body {
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(99, 102, 241, 0.18),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 85%,
+      rgba(168, 85, 247, 0.16),
+      transparent 35%
+    ),
+    var(--bg);
+}
+
+.container {
+  width: 100%;
+  max-width: 680px;
+  padding: 38px;
+  background: rgba(17, 22, 42, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(99, 102, 241, 0.06);
+  animation: appear 0.6s ease;
+}
+
+/* Main heading and decorative icon. */
+h1 {
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  background: linear-gradient(100deg, #60a5fa, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+h1::before {
+  content: "↗";
+  display: block;
+  width: 62px;
+  height: 62px;
+  line-height: 62px;
+  margin: 0 auto 18px;
+  border-radius: 19px;
+  background: linear-gradient(135deg, #4f46e5, #a855f7);
+  color: white;
+  font-size: 2rem;
+  -webkit-text-fill-color: white;
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.35);
+}
+
+header p {
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* URL shortening form. */
+form {
+  margin-top: 32px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 10px;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+form input {
+  margin-bottom: 22px;
+}
+
+input[type="url"],
+input[type="text"] {
+  width: 100%;
+  height: 54px;
+  padding: 0 16px;
+  color: white;
+  background: #0b1020;
+  border: 1px solid #29324d;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+input::placeholder {
+  color: #64748b;
+}
+
+input[type="url"]:focus,
+input[type="text"]:focus {
+  border-color: #818cf8;
+  background: #10162a;
+  box-shadow:
+    0 0 0 4px rgba(99, 102, 241, 0.12),
+    0 0 20px rgba(99, 102, 241, 0.08);
+}
+
+/* Button styles and interaction states. */
+button {
+  width: 100%;
+  min-height: 54px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  background: linear-gradient(100deg, #4f46e5, #7c3aed, #9333ea);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.23);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(124, 58, 237, 0.35);
+  filter: brightness(1.12);
+}
+
+button:active {
+  transform: scale(0.98);
+  filter: brightness(0.9);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Status and feedback messages. */
+#message {
+  margin-top: 18px;
+  padding: 12px 15px;
+  color: #86efac;
+  background: rgba(34, 197, 94, 0.09);
+  border: 1px solid rgba(34, 197, 94, 0.18);
+  border-radius: 10px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  margin-top: 38px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  color: #f1f5f9;
+  font-size: 1.35rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Saved URL list and individual cards. */
+#shortened-urls {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#shortened-urls li {
+  padding: 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 69, 0.7),
+    rgba(17, 22, 42, 0.9)
+  );
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow-wrap: anywhere;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+#shortened-urls li:hover {
+  transform: translateY(-3px);
+  border-color: rgba(129, 140, 248, 0.55);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.18),
+    0 0 20px rgba(99, 102, 241, 0.06);
+}
+
+#shortened-urls li a {
+  display: block;
+  color: #93c5fd;
+  font-size: 0.98rem;
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: color 0.2s ease;
+}
+
+#shortened-urls li a:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
+}
+
+.original-url {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* Delete button. */
+.delete-button {
+  display: inline-block;
+  width: auto;
+  min-width: 90px;
+  min-height: 44px;
+  margin-top: 14px;
+  padding: 10px 16px;
+  color: #ffffff;
+  background: #dc2626;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background: #b91c1c;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.2);
+  filter: none;
+}
+
+.delete-button:active {
+  transform: scale(0.97);
+}
+
+.delete-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Scrollbar and page-load animation. */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080b18;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4f46e5;
+  border-radius: 10px;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive layout for mobile devices. */
+@media (max-width: 600px) {
+  body {
+    padding: 20px 12px;
+    align-items: flex-start;
+  }
+
+  .container {
+    padding: 25px 18px;
+    border-radius: 18px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h1::before {
+    width: 54px;
+    height: 54px;
+    line-height: 54px;
+    font-size: 1.7rem;
+  }
+
+  h2 {
+    font-size: 1.15rem;
+  }
+
+  #shortened-urls li {
+    padding: 14px;
+  }
+
+  button {
+    min-height: 48px;
+  }
+
+  .delete-button {
+    min-height: 44px;
+  }
+}
+
+@media (hover: none) {
+  button:hover,
+  #shortened-urls li:hover {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    padding: 14px 8px;
+  }
+
+  .container {
+    padding: 22px 14px;
+  }
+
+  input[type="url"],
+  input[type="text"] {
+    padding: 0 12px;
+  }
+}

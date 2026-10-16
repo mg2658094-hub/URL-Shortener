@@ -1,0 +1,12 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "description": "A simple URL shortener built with Node.js, HTML, CSS, and JavaScript.",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node --watch app.js",
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "type": "module"
+}

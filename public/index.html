@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>URL Shortener</title>
+  </head>
+
+  <body>
+    <main class="container">
+      <header>
+        <h1>URL Shortener</h1>
+        <p>Transform long URLs into clean, shareable links in seconds.</p>
+      </header>
+
+      <!-- Form to create a shortened URL. -->
+      <form id="shorten-form">
+        <label for="url">Enter Original URL</label>
+        <input
+          type="url"
+          id="url"
+          name="url"
+          placeholder="https://www.example.com"
+          required
+        />
+
+        <label for="shortCode">Enter Short Code</label>
+        <input
+          type="text"
+          id="shortCode"
+          name="shortCode"
+          placeholder="e.g. mylink"
+          pattern="[a-zA-Z0-9_\-]+"
+          title="Use only letters, numbers, hyphens, and underscores."
+          required
+        />
+
+        <button type="submit" id="submit-button">Shorten URL</button>
+      </form>
+
+      <p id="message" role="status" aria-live="polite"></p>
+
+      <!-- Displays saved shortened URLs. -->
+      <section class="links-section" aria-labelledby="links-heading">
+        <h2 id="links-heading">Shortened URLs</h2>
+        <ul id="shortened-urls"></ul>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById("shorten-form");
+      const urlInput = document.getElementById("url");
+      const shortCodeInput = document.getElementById("shortCode");
+      const message = document.getElementById("message");
+      const shortenedURLs = document.getElementById("shortened-urls");
+      const submitButton = document.getElementById("submit-button");
+
+      const showMessage = (text) => {
+        message.textContent = text;
+      };
+
+      // Fetch and display all saved shortened URLs.
+      async function fetchShortenedURLs() {
+        try {
+          const response = await fetch("/links");
+
+          if (!response.ok) {
+            throw new Error("Failed to load shortened URLs.");
+          }
+
+          const links = await response.json();
+
+          shortenedURLs.replaceChildren();
+
+          if (Object.keys(links).length === 0) {
+            const emptyMessage = document.createElement("li");
+            emptyMessage.textContent = "No shortened URLs yet.";
+            shortenedURLs.appendChild(emptyMessage);
+            return;
+          }
+
+          for (const [shortCode, originalURL] of Object.entries(links)) {
+            const li = document.createElement("li");
+
+            const link = document.createElement("a");
+            const shortURL = `${window.location.origin}/${encodeURIComponent(shortCode)}`;
+
+            link.href = shortURL;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = shortURL;
+
+            const original = document.createElement("span");
+            original.className = "original-url";
+
+            const displayedURL =
+              originalURL.length > 40
+                ? `${originalURL.slice(0, 40)}...`
+                : originalURL;
+
+            original.textContent = `→ ${displayedURL}`;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "delete-button";
+            deleteButton.textContent = "Delete";
+            deleteButton.setAttribute(
+              "aria-label",
+              `Delete shortened URL ${shortCode}`,
+            );
+
+            // Delete a shortened URL after confirmation.
+            deleteButton.addEventListener("click", async () => {
+              const confirmed = window.confirm(
+                `Do you want to delete the short URL "${shortCode}"?`,
+              );
+
+              if (!confirmed) {
+                return;
+              }
+
+              deleteButton.disabled = true;
+
+              try {
+                const response = await fetch(
+                  `/links/${encodeURIComponent(shortCode)}`,
+                  {
+                    method: "DELETE",
+                  },
+                );
+
+                if (!response.ok) {
+                  throw new Error(await response.text());
+                }
+
+                await fetchShortenedURLs();
+                showMessage("Shortened URL deleted successfully.");
+              } catch (error) {
+                console.error("Error deleting URL:", error);
+                showMessage("Unable to delete the URL. Please try again.");
+                deleteButton.disabled = false;
+              }
+            });
+
+            li.appendChild(link);
+            li.appendChild(original);
+            li.appendChild(deleteButton);
+            shortenedURLs.appendChild(li);
+          }
+        } catch (error) {
+          console.error("Error loading shortened URLs:", error);
+          showMessage("Unable to load shortened URLs. Please try again.");
+        }
+      }
+
+      // Submit the form without reloading the page.
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const url = urlInput.value.trim();
+        const shortCode = shortCodeInput.value.trim();
+
+        submitButton.disabled = true;
+        showMessage("Creating shortened URL...");
+
+        try {
+          const response = await fetch("/shorten", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url,
+              shortCode,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(await response.text());
+          }
+
+          form.reset();
+          await fetchShortenedURLs();
+          showMessage("URL shortened successfully!");
+        } catch (error) {
+          console.error("Error creating shortened URL:", error);
+          showMessage(error.message || "Unable to shorten the URL.");
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      fetchShortenedURLs();
+    </script>
+  </body>
+</html>
