@@ -2,6 +2,10 @@
 
 A lightweight URL shortener built with **Node.js, HTML, CSS, and JavaScript**. Create custom short links and redirect users to their original URLs.
 
+## Live Demo
+
+[**Visit URL Shortener**](https://url-shortener-yvop.onrender.com)
+
 ## Features
 
 - Create short URLs with custom codes
@@ -31,13 +35,22 @@ URL-Shortener/
 
 ## Getting Started
 
-**Prerequisites:** [Node.js](https://nodejs.org/)
+### Prerequisites
 
-Clone the repository and install dependencies:
+- [Node.js](https://nodejs.org/)
+
+### Installation
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/mg2658094-hub/URL-Shortener.git
 cd URL-Shortener
+```
+
+Install dependencies:
+
+```bash
 npm install
 ```
 
@@ -53,7 +66,7 @@ For development with automatic restarts:
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser, provided your server uses port 3000.
+Open `http://localhost:3000` in your browser if your local server uses port 3000.
 
 ## Author
 
